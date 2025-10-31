@@ -1,5 +1,5 @@
 ﻿// Service Worker – Precache app shell + runtime cache for CDNs
-const VERSION = 'v1.0.1';
+const VERSION = 'v1.1.0';
 const APP_SHELL = [
   './',
   './index.html',

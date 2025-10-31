@@ -1,266 +1,236 @@
-﻿// Random Team Generator – Vanilla JS
-// Small, readable, mobile-first. Persists state and supports seeded shuffles.
+﻿// Random Team Generator – Vanilla JS (no modules)
+(function(){
+  'use strict';
 
-const $ = (q, el=document) => el.querySelector(q);
-const $$ = (q, el=document) => Array.from(el.querySelectorAll(q));
+  function $(q, el){ return (el||document).querySelector(q); }
+  function $$(q, el){ return Array.prototype.slice.call((el||document).querySelectorAll(q)); }
 
-const els = {
-  names:    $('#namesInput'),
-  sample:   $('#sampleBtn'),
-  clear:    $('#clearBtn'),
-  paste:    $('#pasteBtn'),
-  modeRadios: $$('input[name="mode"]'),
-  sizeLbl:  $('#sizeLabel'),
-  size:     $('#sizeInput'),
-  countLbl: $('#countLabel'),
-  count:    $('#countInput'),
-  balance:  $('#balanceInput'),
-  shuffle:  $('#shuffleInput'),
-  seed:     $('#seedInput'),
-  gen:      $('#generateBtn'),
-  share:    $('#shareBtn'),
-  copy:     $('#copyBtn'),
-  results:  $('#results'),
-  install:  $('#installBtn'),
-};
-
-const STORAGE_KEY = 'rtg:v1';
-
-function saveState(){
-  const mode = els.modeRadios.find(r=>r.checked)?.value || 'size';
-  const data = {
-    names: els.names.value,
-    mode,
-    size: parseInt(els.size.value||'3',10),
-    count: parseInt(els.count.value||'3',10),
-    balance: !!els.balance.checked,
-    shuffle: !!els.shuffle.checked,
-    seed: (els.seed.value||'').trim(),
+  var els = {
+    names:    $('#namesInput'),
+    sample:   $('#sampleBtn'),
+    clear:    $('#clearBtn'),
+    paste:    $('#pasteBtn'),
+    modeRadios: $$('input[name="mode"]'),
+    sizeLbl:  $('#sizeLabel'),
+    size:     $('#sizeInput'),
+    countLbl: $('#countLabel'),
+    count:    $('#countInput'),
+    balance:  $('#balanceInput'),
+    shuffle:  $('#shuffleInput'),
+    seed:     $('#seedInput'),
+    gen:      $('#generateBtn'),
+    share:    $('#shareBtn'),
+    copy:     $('#copyBtn'),
+    results:  $('#results'),
+    install:  $('#installBtn')
   };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
 
-function loadState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return;
-    const s = JSON.parse(raw);
-    els.names.value = s.names || '';
-    els.size.value = s.size || 3;
-    els.count.value = s.count || 3;
-    els.balance.checked = !!s.balance;
-    els.shuffle.checked = s.shuffle !== false;
-    els.seed.value = s.seed || '';
-    const m = s.mode === 'count' ? 'count' : 'size';
-    els.modeRadios.forEach(r => r.checked = (r.value===m));
-    applyMode(m);
-  }catch{}
-}
+  var STORAGE_KEY = 'rtg:v2';
 
-function applyMode(mode){
-  if(mode==='count'){
-    els.sizeLbl.classList.add('hidden');
-    els.size.classList.add('hidden');
-    els.countLbl.classList.remove('hidden');
-    els.count.classList.remove('hidden');
-  }else{
-    els.sizeLbl.classList.remove('hidden');
-    els.size.classList.remove('hidden');
-    els.countLbl.classList.add('hidden');
-    els.count.classList.add('hidden');
-  }
-}
-
-function getNames(){
-  return els.names.value
-    .split(/\r?\n|,/) // allow commas or newlines
-    .map(x => x.trim())
-    .filter(Boolean);
-}
-
-// Seeded RNG (Mulberry32) for stable results when seed provided
-function mulberry32(seed){
-  let t = seed >>> 0;
-  return function(){
-    t += 0x6D2B79F5;
-    let r = Math.imul(t ^ (t >>> 15), 1 | t);
-    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
-    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function strHash(str){
-  let h=2166136261; // FNV-1a 32-bit
-  for(let i=0;i<str.length;i++){
-    h ^= str.charCodeAt(i);
-    h += (h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24);
-  }
-  return h>>>0;
-}
-
-function shuffle(arr, rng=Math.random){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(rng()* (i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
-}
-
-function dealIntoTeams(people, {mode, size, count, balance}){
-  const n = people.length;
-  if(n===0) return [];
-
-  let teams = [];
-  if(mode==='size'){
-    const teamSize = Math.max(2, Math.min(99, size||3));
-    const t = Math.max(1, Math.floor(n / teamSize) + (n % teamSize ? 1 : 0));
-    teams = Array.from({length: t}, ()=>[]);
-  }else{
-    const t = Math.max(1, Math.min(50, count||3));
-    teams = Array.from({length: t}, ()=>[]);
+  function saveState(){
+    try{
+      var mode = els.modeRadios.filter(function(r){return r.checked;})[0];
+      var data = {
+        names: els.names && els.names.value || '',
+        mode: mode ? mode.value : 'size',
+        size: parseInt((els.size&&els.size.value)||'3',10),
+        count: parseInt((els.count&&els.count.value)||'3',10),
+        balance: !!(els.balance&&els.balance.checked),
+        shuffle: !!(els.shuffle&&els.shuffle.checked),
+        seed: (els.seed&&els.seed.value||'').trim()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }catch(e){}
   }
 
-  if(balance){
-    // Round-robin dealing to keep sizes even
-    let i=0;
-    for(const p of people){
-      teams[i%teams.length].push(p);
-      i++;
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      var s = JSON.parse(raw);
+      if(els.names) els.names.value = s.names || '';
+      if(els.size) els.size.value = s.size || 3;
+      if(els.count) els.count.value = s.count || 3;
+      if(els.balance) els.balance.checked = !!s.balance;
+      if(els.shuffle) els.shuffle.checked = s.shuffle !== false;
+      if(els.seed) els.seed.value = s.seed || '';
+      var m = s.mode === 'count' ? 'count' : 'size';
+      els.modeRadios.forEach(function(r){ r.checked = (r.value===m); });
+      applyMode(m);
+    }catch(e){}
+  }
+
+  function applyMode(mode){
+    var showCount = mode==='count';
+    if(els.sizeLbl) els.sizeLbl.classList[showCount?'add':'remove']('hidden');
+    if(els.size) els.size.classList[showCount?'add':'remove']('hidden');
+    if(els.countLbl) els.countLbl.classList[showCount?'remove':'add']('hidden');
+    if(els.count) els.count.classList[showCount?'remove':'add']('hidden');
+  }
+
+  function getNames(){
+    var v = (els.names && els.names.value || '');
+    return v.split(/\r?\n|,/).map(function(x){return x.trim();}).filter(Boolean);
+  }
+
+  function mulberry32(seed){
+    var t = seed >>> 0;
+    return function(){
+      t += 0x6D2B79F5;
+      var r = Math.imul(t ^ (t >>> 15), 1 | t);
+      r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function strHash(str){
+    var h=2166136261;
+    for(var i=0;i<str.length;i++){
+      h ^= str.charCodeAt(i);
+      h += (h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24);
     }
-  }else{
-    // Fill one team at a time
-    const per = mode==='size' ? Math.max(2, size||3) : Math.ceil(people.length / teams.length);
-    let idx=0;
-    for(const team of teams){
-      for(let k=0;k<per && idx<people.length;k++) team.push(people[idx++]);
-    }
-    // leftovers
-    let t=0; while(idx<people.length){ teams[t++%teams.length].push(people[idx++]); }
+    return h>>>0;
   }
 
-  return teams;
-}
+  function shuffle(arr, rng){
+    var a = arr.slice();
+    var rand = rng || Math.random;
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(rand()*(i+1));
+      var tmp=a[i]; a[i]=a[j]; a[j]=tmp;
+    }
+    return a;
+  }
 
-function renderTeams(teams){
-  const wrap = document.createElement('div');
-  wrap.className = 'teams';
-  teams.forEach((team, i)=>{
-    const card = document.createElement('div');
-    card.className = 'team';
-    const h = document.createElement('h3');
-    h.textContent = `Team ${i+1} (${team.length})`;
-    const ul = document.createElement('ul');
-    team.forEach(name=>{
-      const li = document.createElement('li');
-      li.textContent = name;
-      ul.appendChild(li);
+  function dealIntoTeams(people, opts){
+    var mode = opts.mode, size = opts.size, count = opts.count, balance = opts.balance;
+    var n = people.length;
+    if(n===0) return [];
+    var teams = [];
+    if(mode==='size'){
+      var teamSize = Math.max(2, Math.min(99, size||3));
+      var t = Math.max(1, Math.floor(n / teamSize) + (n % teamSize ? 1 : 0));
+      for(var i=0;i<t;i++) teams.push([]);
+    }else{
+      var tc = Math.max(1, Math.min(50, count||3));
+      for(var j=0;j<tc;j++) teams.push([]);
+    }
+    if(balance){
+      var k=0; for(var p=0;p<people.length;p++){ teams[k%teams.length].push(people[p]); k++; }
+    }else{
+      var per = mode==='size' ? Math.max(2, size||3) : Math.ceil(people.length / teams.length);
+      var idx=0;
+      for(var g=0; g<teams.length; g++){
+        for(var m=0;m<per && idx<people.length;m++) teams[g].push(people[idx++]);
+      }
+      var t2=0; while(idx<people.length){ teams[(t2++)%teams.length].push(people[idx++]); }
+    }
+    return teams;
+  }
+
+  function renderTeams(teams){
+    var wrap = document.createElement('div'); wrap.className='teams';
+    teams.forEach(function(team, i){
+      var card=document.createElement('div'); card.className='team';
+      var h=document.createElement('h3'); h.textContent='Team '+(i+1)+' ('+team.length+')';
+      var ul=document.createElement('ul');
+      team.forEach(function(name){ var li=document.createElement('li'); li.textContent=name; ul.appendChild(li); });
+      card.appendChild(h); card.appendChild(ul); wrap.appendChild(card);
     });
-    card.append(h, ul);
-    wrap.appendChild(card);
-  });
-  els.results.replaceChildren(wrap);
-}
-
-function teamsToText(teams){
-  return teams.map((t,i)=>`Team ${i+1} (${t.length})\n` + t.map(n=>` - ${n}`).join('\n')).join('\n\n');
-}
-
-async function onGenerate(){
-  const names = getNames();
-  if(names.length<2){
-    alert('Enter at least two names.');
-    return;
+    if(els.results){ els.results.textContent=''; els.results.appendChild(wrap); }
   }
-  const mode = els.modeRadios.find(r=>r.checked)?.value || 'size';
-  const opts = {
-    mode,
-    size: parseInt(els.size.value||'3',10),
-    count: parseInt(els.count.value||'3',10),
-    balance: !!els.balance.checked
-  };
 
-  // RNG
-  let rng = Math.random;
-  const s = (els.seed.value||'').trim();
-  if(s){ rng = mulberry32(strHash(s)); }
-  const source = els.shuffle.checked ? shuffle(names, rng) : names.slice();
-
-  const teams = dealIntoTeams(source, opts);
-  renderTeams(teams);
-  saveState();
-  return teams;
-}
-
-async function onCopy(){
-  const wrap = els.results.querySelector('.teams');
-  if(!wrap){ alert('Nothing to copy yet.'); return; }
-  const text = teamsToText(Array.from(wrap.querySelectorAll('.team')).map(team=>
-    Array.from(team.querySelectorAll('li')).map(li=>li.textContent)
-  ));
-  try{
-    await navigator.clipboard.writeText(text);
-  }catch{
-    // Fallback
-    const t = document.createElement('textarea');
-    t.value = text; document.body.appendChild(t); t.select();
-    try{ document.execCommand('copy'); } finally { t.remove(); }
+  function teamsToText(teams){
+    return teams.map(function(t,i){
+      return 'Team '+(i+1)+' ('+t.length+')\n' + t.map(function(n){return ' - '+n;}).join('\n');
+    }).join('\n\n');
   }
-}
 
-async function onShare(){
-  const wrap = els.results.querySelector('.teams');
-  if(!wrap){ alert('Nothing to share yet.'); return; }
-  const text = teamsToText(Array.from(wrap.querySelectorAll('.team')).map(team=>
-    Array.from(team.querySelectorAll('li')).map(li=>li.textContent)
-  ));
-  if(navigator.share){
-    try{ await navigator.share({ title:'Random Team Generator', text }); return; }catch{}
-  }
-  await onCopy();
-}
-
-// Install prompt (guard against missing button)
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt = e; });
-if(els.install){
-  els.install.addEventListener('click', async ()=>{
-    if(!deferredPrompt) { alert('Installation not available yet.'); return; }
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice; deferredPrompt = null;
-  });
-}
-
-function safeOn(el, type, fn){ if(el) el.addEventListener(type, fn); }
-
-function wireEvents(){
-  safeOn(els.sample, 'click', ()=>{
-    els.names.value = 'Alice\nBob\nCharlie\nDana\nEve\nFrank\nGrace\nHank\nIvy\nJamal\nKira\nLiam';
+  function onGenerate(){
+    var names = getNames();
+    if(names.length<2){ alert('Enter at least two names.'); return; }
+    var modeRadio = els.modeRadios.filter(function(r){return r.checked;})[0];
+    var opts = {
+      mode: (modeRadio?modeRadio.value:'size'),
+      size: parseInt((els.size&&els.size.value)||'3',10),
+      count: parseInt((els.count&&els.count.value)||'3',10),
+      balance: !!(els.balance&&els.balance.checked)
+    };
+    var rng = Math.random;
+    var sv = (els.seed&&els.seed.value||'').trim();
+    if(sv){ rng = mulberry32(strHash(sv)); }
+    var source = (els.shuffle&&els.shuffle.checked) ? shuffle(names, rng) : names.slice();
+    var teams = dealIntoTeams(source, opts);
+    renderTeams(teams);
     saveState();
-  });
-  safeOn(els.clear, 'click', ()=>{ els.names.value=''; saveState(); els.results.replaceChildren(); });
-  safeOn(els.paste, 'click', async ()=>{ try{ els.names.value = await navigator.clipboard.readText(); }catch{} saveState(); });
-  els.modeRadios.forEach(r=> r.addEventListener('change', ()=>{ applyMode(r.value); saveState(); }));
-  [els.size,els.count,els.balance,els.shuffle,els.seed,els.names].forEach(el=> el && el.addEventListener('input', saveState));
-  safeOn(els.gen, 'click', ()=>{ onGenerate().catch(err=>alert('Error: '+err)); });
-  safeOn(els.copy, 'click', onCopy);
-  safeOn(els.share, 'click', onShare);
-}
-
-function init(){
-  applyMode('size');
-  loadState();
-  // Prefill sample names on first visit (no stored names)
-  if(!els.names.value.trim()){
-    els.names.value = 'Alice\nBob\nCharlie\nDana\nEve\nFrank\nGrace\nHank';
+    return teams;
   }
-  wireEvents();
-  // Auto-generate once if we already have at least 2 names
-  if(getNames().length >= 2){ onGenerate().catch(()=>{}); }
-}
 
-if(document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', init);
-}else{
-  init();
-}
+  function onCopy(){
+    var wrap = els.results ? els.results.querySelector('.teams') : null;
+    if(!wrap){ alert('Nothing to copy yet.'); return; }
+    var teams = Array.prototype.map.call(wrap.querySelectorAll('.team'), function(team){
+      return Array.prototype.map.call(team.querySelectorAll('li'), function(li){ return li.textContent; });
+    });
+    var text = teamsToText(teams);
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).catch(function(){});
+    }else{
+      var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+      try{ document.execCommand('copy'); } finally { document.body.removeChild(t); }
+    }
+  }
+
+  function onShare(){
+    var wrap = els.results ? els.results.querySelector('.teams') : null;
+    if(!wrap){ alert('Nothing to share yet.'); return; }
+    var teams = Array.prototype.map.call(wrap.querySelectorAll('.team'), function(team){
+      return Array.prototype.map.call(team.querySelectorAll('li'), function(li){ return li.textContent; });
+    });
+    var text = teamsToText(teams);
+    if(navigator.share){ navigator.share({title:'Random Team Generator', text:text}).catch(function(){}); }
+    else { onCopy(); }
+  }
+
+  // Install prompt guard
+  var deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferredPrompt = e; });
+  if(els.install){
+    els.install.addEventListener('click', function(){
+      if(!deferredPrompt){ alert('Installation not available yet.'); return; }
+      deferredPrompt.prompt();
+      if(deferredPrompt.userChoice) deferredPrompt.userChoice.finally(function(){ deferredPrompt=null; });
+    });
+  }
+
+  function on(el, type, fn){ if(el) el.addEventListener(type, fn); }
+
+  function wireEvents(){
+    on(els.sample, 'click', function(){
+      if(els.names) els.names.value = 'Alice\nBob\nCharlie\nDana\nEve\nFrank\nGrace\nHank\nIvy\nJamal\nKira\nLiam';
+      saveState();
+    });
+    on(els.clear, 'click', function(){ if(els.names) els.names.value=''; saveState(); if(els.results) els.results.textContent=''; });
+    on(els.paste, 'click', function(){
+      if(!navigator.clipboard || !navigator.clipboard.readText){ return; }
+      navigator.clipboard.readText().then(function(t){ if(els.names){ els.names.value=t; saveState(); } }).catch(function(){});
+    });
+    els.modeRadios.forEach(function(r){ r.addEventListener('change', function(){ applyMode(r.value); saveState(); }); });
+    [els.size,els.count,els.balance,els.shuffle,els.seed,els.names].forEach(function(el){ if(el) el.addEventListener('input', saveState); });
+    on(els.gen, 'click', onGenerate);
+    on(els.copy, 'click', onCopy);
+    on(els.share, 'click', onShare);
+  }
+
+  function init(){
+    applyMode('size');
+    loadState();
+    if(els.names && !els.names.value.trim()){
+      els.names.value = 'Alice\nBob\nCharlie\nDana\nEve\nFrank\nGrace\nHank';
+    }
+    wireEvents();
+    if(getNames().length >= 2){ onGenerate(); }
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
