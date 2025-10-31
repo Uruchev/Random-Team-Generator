@@ -255,6 +255,8 @@ function init(){
     els.names.value = 'Alice\nBob\nCharlie\nDana\nEve\nFrank\nGrace\nHank';
   }
   wireEvents();
+  // Auto-generate once if we already have at least 2 names
+  if(getNames().length >= 2){ onGenerate().catch(()=>{}); }
 }
 
 if(document.readyState === 'loading'){
