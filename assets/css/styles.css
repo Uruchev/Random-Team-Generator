@@ -1,0 +1,47 @@
+﻿/* App custom styles (mobile-first). Keep tiny, layer utilities for safe area. */
+:root{color-scheme:light dark}
+html,body{height:100%}
+/* iPhone safe areas */
+.safe-area{padding-top:calc(16px + env(safe-area-inset-top));padding-bottom:calc(16px + env(safe-area-inset-bottom));}
+
+/***** UI atoms *****/
+.label{display:block;font-size:.8rem;color:#475569;margin-bottom:.4rem}
+.field{width:100%;appearance:none;background:#fff;border:1px solid #e2e8f0;border-radius:.75rem;padding:.7rem .9rem;box-shadow:0 1px 0 rgba(2,8,23,.03);outline:none}
+.field:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.18)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border-radius:.75rem;padding:.65rem .9rem;white-space:nowrap}
+.btn-primary{background:#0ea5e9;color:#fff}
+.btn-primary:hover{background:#0284c7}
+.btn-secondary{background:#f1f5f9;color:#0f172a}
+.btn-secondary:hover{background:#e2e8f0}
+.btn-ghost{background:transparent;color:#0f172a;border:1px solid #e2e8f0}
+.btn-ghost:hover{background:#f8fafc}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:1rem;box-shadow:0 6px 20px rgba(2,8,23,.06)}
+.card-header{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem}
+.card-title{font-weight:600}
+.card-sub{font-size:.8rem;color:#64748b}
+.chip{display:inline-flex;align-items:center;gap:.5rem;border:1px solid #e2e8f0;border-radius:999px;padding:.35rem .65rem;font-size:.9rem}
+.chip input{accent-color:#0ea5e9}
+.tick{display:flex;align-items:center;gap:.5rem;margin:.25rem 0}
+.tick input{accent-color:#0ea5e9}
+
+/* Team grid responsive */
+.teams{display:grid;grid-template-columns:1fr;gap:.75rem}
+@media(min-width:640px){.teams{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1024px){.teams{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.team{background:#ffffff;border:1px solid #e2e8f0;border-radius:.9rem;padding:.8rem}
+.team h3{font-weight:600;margin-bottom:.4rem}
+.team ul{list-style:none;margin:0;padding:0}
+.team li{padding:.35rem .55rem;border-radius:.5rem}
+.team li:nth-child(odd){background:#f8fafc}
+
+/* Dark mode tweaks (prefers-color-scheme) */
+@media(prefers-color-scheme:dark){
+  body{background:#0b1220;color:#e2e8f0}
+  .field{background:#0f172a;border-color:#1f2a44;color:#e2e8f0}
+  .btn-ghost{color:#e2e8f0;border-color:#1f2a44}
+  .btn-secondary{background:#0f172a;color:#e2e8f0;border:1px solid #1f2a44}
+  .card{background:#0f172a;border-color:#1f2a44;box-shadow:0 6px 20px rgba(2,8,23,.35)}
+  .chip{border-color:#1f2a44}
+  .team{background:#0b1220;border-color:#1f2a44}
+  .team li:nth-child(odd){background:#0f172a}
+}
