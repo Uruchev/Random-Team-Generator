@@ -220,30 +220,45 @@ async function onShare(){
   await onCopy();
 }
 
-// Install prompt
+// Install prompt (guard against missing button)
 let deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt = e; });
-els.install.addEventListener('click', async ()=>{
-  if(!deferredPrompt) { alert('Installation not available yet.'); return; }
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice; deferredPrompt = null;
-});
+if(els.install){
+  els.install.addEventListener('click', async ()=>{
+    if(!deferredPrompt) { alert('Installation not available yet.'); return; }
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice; deferredPrompt = null;
+  });
+}
+
+function safeOn(el, type, fn){ if(el) el.addEventListener(type, fn); }
 
 function wireEvents(){
-  els.sample.addEventListener('click', ()=>{
+  safeOn(els.sample, 'click', ()=>{
     els.names.value = 'Alice\nBob\nCharlie\nDana\nEve\nFrank\nGrace\nHank\nIvy\nJamal\nKira\nLiam';
     saveState();
   });
-  els.clear.addEventListener('click', ()=>{ els.names.value=''; saveState(); els.results.replaceChildren(); });
-  els.paste.addEventListener('click', async ()=>{ try{ els.names.value = await navigator.clipboard.readText(); }catch{} saveState(); });
+  safeOn(els.clear, 'click', ()=>{ els.names.value=''; saveState(); els.results.replaceChildren(); });
+  safeOn(els.paste, 'click', async ()=>{ try{ els.names.value = await navigator.clipboard.readText(); }catch{} saveState(); });
   els.modeRadios.forEach(r=> r.addEventListener('change', ()=>{ applyMode(r.value); saveState(); }));
-  [els.size,els.count,els.balance,els.shuffle,els.seed,els.names].forEach(el=> el.addEventListener('input', saveState));
-  els.gen.addEventListener('click', onGenerate);
-  els.copy.addEventListener('click', onCopy);
-  els.share.addEventListener('click', onShare);
+  [els.size,els.count,els.balance,els.shuffle,els.seed,els.names].forEach(el=> el && el.addEventListener('input', saveState));
+  safeOn(els.gen, 'click', ()=>{ onGenerate().catch(err=>alert('Error: '+err)); });
+  safeOn(els.copy, 'click', onCopy);
+  safeOn(els.share, 'click', onShare);
 }
 
-// Init
-applyMode('size');
-loadState();
-wireEvents();
+function init(){
+  applyMode('size');
+  loadState();
+  // Prefill sample names on first visit (no stored names)
+  if(!els.names.value.trim()){
+    els.names.value = 'Alice\nBob\nCharlie\nDana\nEve\nFrank\nGrace\nHank';
+  }
+  wireEvents();
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', init);
+}else{
+  init();
+}
