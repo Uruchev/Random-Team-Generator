@@ -1,56 +1,88 @@
-🧠 Random Team Generator
-AI-Free, Mobile‑First Team Builder (PWA)
-Live Demo PWA Ready HTML5 CSS3 (Tailwind CDN) Vanilla JS Font Awesome
+<div align="center">
 
-A clean, responsive, offline‑capable team generator. Paste participants, choose by team size or team count, optionally seed for reproducible results, and copy/share teams instantly. Built with vanilla code for reliability on GitHub Pages.
+# AI‑Free Random Team Generator
 
-🚀 Try Random Team Generator | 📧 Contact Creator | 🐛 Report Issues
+[![Live Demo](https://img.shields.io/badge/live-demo-0ea5e9?logo=githubpages&logoColor=white)](https://uruchev.github.io/Random-Team-Generator/)
+[![View App](https://img.shields.io/badge/view-app-0ea5e9)](https://uruchev.github.io/Random-Team-Generator/)
+[![PWA](https://img.shields.io/badge/pwa-ready-brightgreen)](#-pwa-features)
+[![HTML5](https://img.shields.io/badge/HTML5-%23e34f26)](#-tech-stack)
+[![CSS3](https://img.shields.io/badge/CSS3-%231572B6)](#-tech-stack)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES2023-%23f7df1e)](#-tech-stack)
+[![Tailwind](https://img.shields.io/badge/Tailwind-CDN-%230ea5e9)](#-tech-stack)
+[![Font%20Awesome](https://img.shields.io/badge/Font%20Awesome-6.x-%230079f2)](#-tech-stack)
 
-☕ Buy Me a Coffee
+A lightweight, mobile‑first, offline‑capable team generator. Paste names, choose by team size or team count, optionally add a seed for reproducible results, and copy/share instantly. Built with vanilla web tech to run flawlessly on GitHub Pages.
 
-📋 Table of Contents
-🌟 About the App
-🎯 Core Features
-🛠️ Tools Overview
-🚀 Quick Start
-💻 Tech Stack
-📱 PWA Features
-🎨 UI/UX Features
-🔧 Development
-📦 Deployment
-🤝 Contributing
-📞 Support
-📄 License
+🔗 [Try the App Now](https://uruchev.github.io/Random-Team-Generator/) · 📬 [Contact Creator](https://github.com/Uruchev) · 🐛 [Report Issues](https://github.com/Uruchev/Random-Team-Generator/issues)
 
-🌟 About the App
-Random Team Generator is a modern Progressive Web App (PWA) designed to split participants into balanced teams quickly. It’s optimized for mobile with iPhone safe‑area support and works offline after the first visit. No frameworks, no build steps—just fast, dependable vanilla web tech.
+---
 
-🎯 Core Features
-📚 Team Generation Modes
-• By Team Size – Specify members per team
-• By Team Count – Specify number of teams
-🔀 Randomization Controls
-• Seeded Shuffle – Enter any seed for reproducible results
-• Shuffle Toggle – Choose whether to randomize input
-⚖️ Balancing
-• Even Distribution – Round‑robin dealing to keep sizes close
-📋 Output & Sharing
-• Copy to Clipboard – Clean plain‑text teams
-• Web Share – Share via native sheet where supported
-💾 Persistence
-• Auto‑Save – Inputs and options persist via localStorage
-🌓 Appearance
-• Dark Mode – Respects system preference
-• Safe Areas – iPhone notch/home indicator aware
+☕ <a href="#">Buy Me a Coffee</a>
 
-🛠️ Tools Overview
-This repository currently includes the Random Team Generator tool. It’s engineered to be extendable for future utilities like counters or timers while staying dependency‑light.
+</div>
 
-🚀 Quick Start
-Prerequisites
-None. To test PWA features locally, serve over HTTP.
+## 📋 Table of Contents
 
-Local Run
+- 🌟 [About the App](#-about-the-app)
+- 🎯 [Core Features](#-core-features)
+- 🛠️ [Tools Overview](#%EF%B8%8F-tools-overview)
+- 🚀 [Quick Start](#-quick-start)
+- 💻 [Tech Stack](#-tech-stack)
+- 📱 [PWA Features](#-pwa-features)
+- 🎨 [UI/UX Features](#-uiux-features)
+- 🔧 [Development](#-development)
+- 📦 [Deployment](#-deployment)
+- 🤝 [Contributing](#-contributing)
+- 📞 [Support](#-support)
+- 📄 [License](#-license)
+
+---
+
+## 🌟 About the App
+
+Random Team Generator is a modern Progressive Web App (PWA) that creates balanced teams from a list of participants. It’s optimized for mobile (with iPhone safe‑area handling) and works offline after the first visit. No frameworks or build steps—just fast, dependable vanilla web tech.
+
+---
+
+## 🎯 Core Features
+
+### 📚 Team Generation Modes
+- Visual mode switch: by team size or by team count
+- Intelligent input parsing (lines or commas)
+
+### 🔀 Randomization Controls
+- Seeded shuffle for reproducible results
+- Optional shuffle toggle (keep original order when needed)
+
+### ⚖️ Balancing
+- Round‑robin dealing keeps team sizes even
+- Optional block‑fill with graceful leftover distribution
+
+### 📋 Output & Sharing
+- One‑click Copy (plain text)
+- Web Share Sheet where supported (mobile‑friendly)
+
+### 💾 Persistence
+- Auto‑save all inputs and options via `localStorage`
+
+### 🌓 Appearance
+- Dark mode via `prefers-color-scheme`
+- Safe‑area aware (iPhone notch and home indicator)
+
+---
+
+## 🛠️ Tools Overview
+
+This repository currently includes the Random Team Generator tool. The codebase is organized to stay dependency‑free and can be extended with small utilities (e.g., counters or timers) without adding frameworks.
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+None. For PWA features, run over HTTP.
+
+### Local Run
 ```sh
 # Python 3
 python -m http.server 8000
@@ -59,45 +91,63 @@ npx http-server -p 8000
 ```
 Open http://localhost:8000/
 
-Note: Service Worker and install prompts do not work on file:// URLs.
+Note: Service Worker and install prompts do not work on `file://` URLs.
 
-💻 Tech Stack
-Frontend
-• HTML5 – Semantic, accessible structure
-• CSS3 – Tailwind CDN + small custom CSS
-• JavaScript – Vanilla ES modules
-Icons & Fonts
-• Font Awesome via CDNJS
-PWA & Performance
-• Service Worker – App‑shell precache + CDN runtime cache
-• Web App Manifest – Installable, standalone display
-• Lazy‑free – No framework/runtime overhead
-Hosting
-• GitHub Pages – Static hosting
+---
 
-📱 PWA Features
-Installation & Offline
-• Installable – Add to Home Screen on Android and iOS
-• Offline Support – Works after first load
-• Auto‑Updates – SW versioning with cache cleanup
-Mobile Optimization
-• Mobile‑First – Designed primarily for phones
-• Safe‑Area Aware – Uses viewport‑fit=cover and env(safe-area-inset-*)
-• Responsive Grid – Teams layout adapts for larger screens
+## 💻 Tech Stack
 
-🎨 UI/UX Features
-Design System
-• Tailwind Utilities – Minimal runtime config via CDN
-• Custom UI Atoms – Buttons, fields, cards in `assets/css/styles.css`
-Accessibility
-• Labels, live regions, clear focus states
-• Input modes optimized for mobile (numeric, text)
-User Experience
-• Fast interactions, small bundle, no build
-• Copy/Share flows and persistent settings
+### Frontend
+- HTML5 (semantic structure)
+- CSS3 (Tailwind via CDN + small custom CSS)
+- JavaScript (Vanilla ES modules)
 
-🔧 Development
-Project Structure
+### Icons & Fonts
+- Font Awesome via CDNJS
+
+### PWA & Performance
+- Service Worker (app‑shell precache + CDN runtime cache)
+- Web App Manifest (installable, standalone)
+- Zero framework/runtime overhead
+
+### Hosting
+- GitHub Pages (static hosting)
+
+---
+
+## 📱 PWA Features
+
+### Installation & Offline
+- Installable on Android and iOS
+- Offline after first load
+- Auto‑updates with SW versioning + cache cleanup
+
+### Mobile Optimization
+- Mobile‑first layout
+- `viewport-fit=cover` + `env(safe-area-inset-*)`
+- Responsive grid for larger screens
+
+---
+
+## 🎨 UI/UX Features
+
+### Design System
+- Tailwind utilities (runtime config via CDN)
+- Custom atoms: buttons, fields, cards in `assets/css/styles.css`
+
+### Accessibility
+- Labels, live regions, focus states
+- Mobile‑optimized input modes
+
+### User Experience
+- Fast interactions, tiny bundle, no build
+- Copy/Share flows and persistent settings
+
+---
+
+## 🔧 Development
+
+### Project Structure
 ```
 index.html                     # App shell
 manifest.webmanifest           # PWA manifest
@@ -111,35 +161,44 @@ assets/
   icons/                       # Generated icons (Apple/Android, maskable)
 ```
 
-Available Scripts
-No build required. Use any static server for local testing (see Quick Start).
+### Code Notes
+- Seeded RNG: Mulberry32 with FNV‑1a seed hashing
+- Dealing: round‑robin balancing or block fill
+- Storage: `localStorage` under `rtg:v1`
+- CDN caching: Tailwind + CDNJS via SW runtime cache
 
-Code Notes
-• Seeded RNG – Mulberry32 with FNV‑1a seed hashing
-• Team Dealing – Round‑robin balancing or block fill
-• Storage – localStorage with a single `rtg:v1` key
-• CDN Caching – SW runtime cache for Tailwind and CDNJS
+---
 
-📦 Deployment
-GitHub Pages (Recommended)
-1) Push to GitHub
-2) Settings → Pages → Deploy from Branch → `/ (root)`
-3) Open: https://<user>.github.io/<repo>/
+## 📦 Deployment
+
+### GitHub Pages (Recommended)
+1. Push to GitHub
+2. Settings → Pages → Deploy from Branch → `/ (root)`
+3. Open: https://uruchev.github.io/Random-Team-Generator/
 
 All asset paths are relative (`./`), so the app works under project subpaths.
 
-Custom Domains
+### Custom Domains
 Add a `CNAME` file at repo root and configure DNS per GitHub Pages docs.
 
-🤝 Contributing
+---
+
+## 🤝 Contributing
+
 Contributions are welcome! Please:
-• Keep the footprint small and dependency‑free
-• Match code style and naming
-• Test mobile behavior and offline before PRs
+- Keep the footprint small and dependency‑free
+- Match code style and naming
+- Test mobile behavior and offline before PRs
 
-📞 Support
-• Issues: GitHub Issues in this repository
-• Discussions: GitHub Discussions (if enabled)
+---
 
-📄 License
+## 📞 Support
+
+- Issues: [Open an issue](https://github.com/Uruchev/Random-Team-Generator/issues)
+- Creator: [@Uruchev](https://github.com/Uruchev)
+
+---
+
+## 📄 License
+
 This project is licensed under the MIT License. See `LICENSE` for details.
